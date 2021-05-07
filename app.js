@@ -17,7 +17,7 @@ app.set("view engine","ejs");
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.use(session({
-    secret: "keyboard cat",
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
 }));
@@ -25,7 +25,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/userDB", {useNewUrlParser: true , useUnifiedTopology: true,useFindAndModify: false});
+mongoose.connect(process.env.URL, {useNewUrlParser: true , useUnifiedTopology: true,useFindAndModify: false});
 mongoose.set("useCreateIndex",true);
 
 const userSchema = new mongoose.Schema({
@@ -76,7 +76,6 @@ app.get("/auth/google",
 app.get("/auth/google/secrets", 
   passport.authenticate("google", { failureRedirect: "/login" }),
   function(req, res) {
-    // Successful authentication, redirect secrets.
     res.redirect("/secrets");
 });
 
@@ -137,7 +136,7 @@ app.post("/register",function (req,res) {
     User.register({username: req.body.username}, req.body.password, function (err,user) {
         if(err){
             console.log(err);
-            res.redirect("/");
+            res.redirect("/register");
         } else{
             passport.authenticate("local")(req,res,function () {
                 res.redirect("/secrets");
@@ -155,13 +154,13 @@ app.post("/login",function (req,res) {
         if(err){
             console.log(err);
         } else{
-            passport.authenticate("local")(req,res,function () {
+            passport.authenticate("local",{ failureRedirect: "/login" })(req,res,function () {
                 res.redirect("/secrets");
             });
         }
     })
 });
 
-app.listen(3000,function () {
-    console.log("Server is running on port 3000...");
+app.listen(process.env.PORT || 3000,function () {
+    console.log("Server is running ...");
 })
