@@ -9,7 +9,14 @@
     <form action="/submit" method="POST">
 
       <div class="form-group">
-        <input type="text" class="form-control text-center" name="secret" placeholder="What's your secret?">
+        <input type="text" class="form-control text-center" name="content" placeholder="What's your secret?">
+        <select id="cat" name="category">
+          <option value="Personal">Personal</option>
+          <option value="Work-related">Work-related</option>
+          <option value="Family-related">Family-related</option>
+          <option value="General">General</option>
+          <option value="Other">Other</option>
+          </select>
       </div>
       <button type="submit" class="btn btn-dark">Submit</button>
     </form>

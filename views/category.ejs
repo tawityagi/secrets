@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<div class="jumbotron text-center">
+  <div class="container">
+    <i class="fas fa-key fa-6x"></i>
+    <h1 class="display-3">You've Discovered My Secret!</h1>
+    <form action="/category" method="POST">
+
+        <div class="form-group">
+          <select id="cat2" name="category">
+            <option value="Personal">Personal</option>
+            <option value="Work-related">Work-related</option>
+            <option value="Family-related">Family-related</option>
+            <option value="General">General</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-dark">View by category</button>
+      </form>
+    <% if(usersWithSecrets){ %>
+      <h4> Requested Category : <%= reqCategory %> </h4><br>
+      <% usersWithSecrets.forEach(function(user){ %>
+        <% user.secret.forEach(function(secret){ %>
+          <% if(secret.category === reqCategory){ %>
+            <p class="secret-text"> <%= secret.content %>  </p>
+          <% } %>
+        <% }) %>
+      <% }) %>
+    <% } %>
+
+    <hr>
+    
+    <a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
+    <a class="btn btn-dark btn-lg" href="/submit" role="button">Submit a Secret</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

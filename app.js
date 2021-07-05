@@ -32,7 +32,10 @@ const userSchema = new mongoose.Schema({
     email: String,
     password: String,
     googleId: String,
-    secret: String
+    secret: [{
+        content : String,
+        category : String
+    }]
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -64,7 +67,6 @@ passport.use(new GoogleStrategy({
     });
   }
 ));
-
 app.get("/",function (req,res) {
     res.render("home");
 });
@@ -84,13 +86,21 @@ app.get("/login",function (req,res) {
 });
 
 app.get("/register",function (req,res) {
-    res.render("register");
+    res.render("register",{message: ""});
 });
 
 app.get("/logout", function (req,res) {
     req.logout();
     res.redirect("/");
 })
+
+app.get("/submit", function (req,res) {
+    if (req.isAuthenticated()){
+        res.render("submit");
+    } else{
+        res.redirect("/login");
+    }
+});
 
 app.get("/secrets", function (req,res) {
     if (req.isAuthenticated()){
@@ -107,23 +117,41 @@ app.get("/secrets", function (req,res) {
         res.redirect("/login");
     }
 });
-
-app.get("/submit", function (req,res) {
+app.get("/category", function (req,res) {
     if (req.isAuthenticated()){
-        res.render("submit");
+        res.render("category",{usersWithSecrets: null});
+    } else{
+        res.redirect("/login");
+    }
+});
+app.post("/category", function (req,res) {
+    if (req.isAuthenticated()){
+        var reqCat = req.body.category;
+        if(reqCat === undefined || reqCat === null)
+            reqCat = "General";
+        User.find({"secret.category":  reqCat }, function (err, foundUsers) {
+            if(err){
+                console.log(err);
+            } else{
+                if(foundUsers){
+                    res.render("category", { usersWithSecrets: foundUsers, reqCategory: reqCat });
+                }
+            }
+        })
     } else{
         res.redirect("/login");
     }
 });
 
 app.post("/submit", function (req,res) {
-    const submittedSecret = req.body.secret;
+    const submittedSecret = {content :req.body.content,
+        category:  req.body.category};
     User.findById(req.user.id, function (err,foundUser) {
         if(err){
             console.log(err);
         } else {
             if(foundUser){
-                foundUser.secret= submittedSecret;
+                foundUser.secret.push(submittedSecret);
                 foundUser.save(function () {
                     res.redirect("/secrets")
                 });
@@ -135,8 +163,7 @@ app.post("/submit", function (req,res) {
 app.post("/register",function (req,res) {
     User.register({username: req.body.username}, req.body.password, function (err,user) {
         if(err){
-            console.log(err);
-            res.redirect("/register");
+            res.render("register",{message: "Already a member!"});
         } else{
             passport.authenticate("local")(req,res,function () {
                 res.redirect("/secrets");

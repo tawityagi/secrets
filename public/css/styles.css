@@ -5,14 +5,14 @@ body {
 .custContainer{
   margin: 0 auto 0 auto;
   width: 40%;
-  padding-top: 100px;
+  padding-top: 80px;
 }
 
 @media only screen and (max-width: 600px) {
   .custContainer {
     margin: 0 auto 0 auto;
     width: 70%;
-    padding-top: 100px;
+    padding-top: 80px;
   }
 }
 .centered {
@@ -30,7 +30,6 @@ body {
 .myIcon{
   margin-top: 3%;
   text-align: center;
-  background-color: #343a40;
 }
 
 .custCard{

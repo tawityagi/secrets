@@ -1,5 +1,7 @@
 <%- include('partials/header') %>
-
+<% if (! ( message === undefined || message === null )) {%>
+  <p><%= message %>  </p>
+<% } %>
 <div class="container mt-5 custContainer">
   <h1 class="display-3 text-center">Secrets</h1>
   <div class="card custCard">
@@ -15,6 +17,7 @@
         </div>
         <button type="submit" class="btn btn-dark">Register</button>
       </form>
+      <a class="btn btn-block btn-dark myIcon" href="/login" role="button">Already a member? </a>
     </div>
   </div>
   <a class="myIcon btn btn-block btn-social btn-google" href="/auth/google" role="button">
